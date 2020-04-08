@@ -1,0 +1,12 @@
+---
+- hosts: k8s_master
+  become: yes
+  become_user: root
+  roles:
+    - {role: k8s/master, tag: master}
+
+- hosts: k8s_node
+  become: yes
+  become_user: root
+  roles:
+    - {role: k8s/node, tag: node}

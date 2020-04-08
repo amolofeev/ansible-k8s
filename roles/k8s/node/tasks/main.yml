@@ -1,0 +1,46 @@
+---
+- name: install curl
+  apt:
+    name: '{{item}}'
+    state: present
+  with_items:
+    - apt-transport-https
+    - curl
+
+- name: Add Google GPG key
+  raw: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+- name: Add the k8s APT repo
+  apt_repository:
+    repo: 'deb http://apt.kubernetes.io/ kubernetes-xenial main'
+    state: present
+
+- name: apt-get update
+  raw: apt-get update
+
+- name: Install dependencies
+  apt:
+    name: "{{item}}"
+    state: present
+    force: yes
+  with_items: "{{k8s_node_packages}}"
+
+- name: disable swap
+  raw: swapoff -a
+
+- name: Remove current swaps from fstab
+  lineinfile:
+    dest: /etc/fstab
+    regexp: '(?i)^([^#][\S]+\s+(none|swap)\s+swap.*)'
+    line: '# \1'
+    backrefs: yes
+    state: present
+
+- name: patch sysctl params
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+  with_items:
+    - { name: 'vm.swappiness', value: '0' }
+    - { name: 'net.bridge.bridge-nf-call-iptables', value: '1' }

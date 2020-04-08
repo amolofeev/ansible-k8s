@@ -1,0 +1,11 @@
+[k8s_master]
+;10.10.10.2
+
+[k8s_node]
+;10.10.10.3
+10.10.10.4
+
+
+[all:children]
+k8s_master
+k8s_node

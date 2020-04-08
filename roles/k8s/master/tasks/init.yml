@@ -1,0 +1,27 @@
+---
+- name: Init Kubernetes cluster
+  raw: |
+    kubeadm init \
+    --apiserver-advertise-address '{{ inventory_hostname }}' \
+    --control-plane-endpoint '{{ inventory_hostname }}'
+  register: init_cluster
+
+- name: Create Kubernetes config directory
+  when: init_cluster is succeeded
+  file:
+    path: .kube/
+    state: directory
+
+- name: Copy admin.conf to Home directory
+  when: init_cluster is succeeded
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: .kube/config
+    owner: "{{ ansible_user | default(ansible_user_id) }}"
+    group: "{{ ansible_user | default(ansible_user_id) }}"
+    mode: 0755
+    remote_src: true
+
+- name: setup network
+  become: no
+  raw: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"

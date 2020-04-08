@@ -1,0 +1,6 @@
+k8s_node_packages:
+  - cri-tools
+  - kubernetes-cni
+  - kubelet
+  - kubectl
+  - kubeadm
