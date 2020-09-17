@@ -1,9 +1,12 @@
 [k8s_master]
-;10.10.10.2
+10.10.10.10 hostname=master
 
 [k8s_node]
-;10.10.10.3
-10.10.10.4
+10.10.10.11 hostname=n11
+10.10.10.12 hostname=n12
+10.10.10.13 hostname=n13
+10.10.10.14 hostname=n14
+10.10.10.15 hostname=n15
 
 
 [all:children]
